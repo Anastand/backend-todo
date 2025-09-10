@@ -1,5 +1,8 @@
+// src/middleware/loggermiddleware.js
 export default function loggermiddleware(req, res, next) {
-  console.log(`hello from logger middleware, here is the method: ${req.method} and url : ${req.url}`)
-  res.json({ msg: 'hello from logger middleware' })
-  next()
+  console.log(
+    `${new Date().toISOString()} - ${req.method} ${req.url}`
+  );
+  // don't send a response here — just forward to the next middleware/route
+  next();
 }
