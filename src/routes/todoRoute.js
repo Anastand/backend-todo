@@ -1,4 +1,5 @@
 import express from 'express'
+import prisma from '../lib/prisma.js'
 import {createError} from "../utils/createError.js"
 import {createTodoSchema} from "../validator/todoValidator.js"
 import {updateTodoSchema} from "../validator/todoValidator.js"
@@ -8,7 +9,7 @@ router.get("/test", (req, res) => { // check for the route
   res.json({msg:"works from todo router"})
 })
 
-router.post("/", (req, res, next) => { // add a todo
+router.post("/", async(req, res, next) => { // add a todo
   const parseResult = createTodoSchema.safeParse(req.body)
   if (!parseResult.success) {
     return next(createError(400, parseResult.error.message))
