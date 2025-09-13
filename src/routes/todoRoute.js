@@ -1,11 +1,13 @@
 import express from 'express'
+import {createError} from "../utils/createError.js"
+import {createTodoSchema} from "../validator/todoValidator.js"
 const router = express.Router()
 
 router.get("/test", (req, res) => { // check for the route
   res.json({msg:"works from todo router"})
 })
 
-router.post("/", (req, res) => { // add a todo
+router.post("/", (req, res,next) => { // add a todo
   const todos = req.app.locals.todo || [];
   const { title } = req.body;
   if (!title) return res.status(400).json({ msg: "no title found to add" });
