@@ -13,8 +13,7 @@ const PORT = process.env.PORT || 4000
 app.use("/api/todo",todoRouter)
 
 
-
-app.use((err, req, res, next) => { // this is basically a middleware things which can be called by next(variable name to check for errors)
+app.use((err, req, res, next) => { // this is basically a middleware things which can be called by next(variable name) to check for errors
   const status = err && (err.status || err.statusCode) ? (err.status || err.statusCode) : 500
   
   console.log(`ERROR DETECTED : ${err.message}`)
