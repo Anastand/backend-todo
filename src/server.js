@@ -6,29 +6,12 @@ dotenv.config();
 const app = express()
 app.use(express.json())
 // app.use(loggermiddleware)
-
-
-let todo = []
-let Idcount = 0
-
-app.locals.todo = todo;     
-app.locals.Idcount = Idcount;
+import { resetDatabase } from './lib/prisma.js'
 
 const PORT = process.env.PORT || 4000
 
 app.use("/api/todo",todoRouter)
 
-
-
-
-app.get("/api/ping", loggermiddleware, (req, res,next) => { // ping route (health check)
-  res.json({ ok: true, timestamp: Date.now() });
-});
-
-
-app.get("/check", loggermiddleware, (req, res) => { // check route (example showing middleware + response)
-  res.status(200).json({ msg: "check ok" });
-});
 
 
 app.use((err, req, res, next) => { // this is basically a middleware things which can be called by next(variable name to check for errors)
@@ -40,6 +23,10 @@ app.use((err, req, res, next) => { // this is basically a middleware things whic
     message: err.message || "INTERNAL ERROR"
   })
 })
+
+if (process.env.NODE_ENV !== 'production') {
+  resetDatabase()
+}
 
 app.listen(PORT, () => { console.log(`we are on the port : ${PORT}`) })
 
