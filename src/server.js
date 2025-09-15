@@ -1,11 +1,9 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import loggermiddleware from './middleware/loggermiddleware.js';
 import todoRouter from './routes/todoRoute.js'
 dotenv.config();
 const app = express()
 app.use(express.json())
-// app.use(loggermiddleware)
 import { resetDatabase } from './lib/prisma.js'
 
 const PORT = process.env.PORT || 4000

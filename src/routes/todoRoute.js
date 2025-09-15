@@ -68,7 +68,6 @@ try {
   const deletedTodo = await prisma.todo.delete({
     where:{id:Number(id)}
   })
-  // const [deleted] = todos.splice(idx, 1);
   res.json({ msg: "todo deleted", deletedTodo });
 } catch (error) {
   next(error)
