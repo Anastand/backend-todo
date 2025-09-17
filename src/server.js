@@ -4,7 +4,7 @@ import todoRouter from './routes/todoRoute.js'
 dotenv.config();
 const app = express()
 app.use(express.json())
-import { resetDatabase } from './lib/prisma.js'
+import { resetTodoDatabase } from './lib/prisma.js'
 
 const PORT = process.env.PORT || 4000
 
@@ -22,8 +22,11 @@ app.use((err, req, res, next) => { // this is basically a middleware things whic
 })
 
 if (process.env.NODE_ENV !== 'production') {
-  resetDatabase()
+  resetTodoDatabase()
 }
+// if (process.env.NODE_ENV_USER !== 'production') {
+//   resetUserDatabase()
+// }
 
 app.listen(PORT, () => { console.log(`we are on the port : ${PORT}`) })
 

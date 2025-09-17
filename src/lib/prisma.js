@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
   prisma = global.prisma
 }
 // development clear all table -|
-export const resetDatabase = async () => {
+export const resetTodoDatabase = async () => {
   if (process.env.NODE_ENV === 'production') return
   try {
     await prisma.todo.deleteMany({})
@@ -22,4 +22,14 @@ export const resetDatabase = async () => {
     console.log('Reset failed:', error.message)
   }
 }
+// export const resetUserDatabase = async () => {
+//   if (process.env.NODE_ENV_USER === 'production') return
+//   try {
+//     await prisma.users.deleteMany({})
+//     await prisma.$executeRaw`DELETE FROM sqlite_sequence WHERE name='User'`
+//     console.log('🗑️ Database reset - IDs will start from 1')
+//   } catch (error) {
+//     console.log('Reset failed:', error.message)
+//   }
+// }
 export default prisma
