@@ -4,7 +4,7 @@ import todoRouter from './routes/todoRoute.js'
 dotenv.config();
 const app = express()
 app.use(express.json())
-import { resetTodoDatabase } from './lib/prisma.js'
+import { resetTodoDatabase , resetUserDatabase} from './lib/prisma.js'
 import authRouter from "./routes/authRoute.js"
 
 const PORT = process.env.PORT || 4000
@@ -27,9 +27,9 @@ app.use((err, req, res, next) => { // this is basically a middleware things whic
 if (process.env.NODE_ENV !== 'production') {
   resetTodoDatabase()
 }
-// if (process.env.NODE_ENV_USER !== 'production') {
-//   resetUserDatabase()
-// }
+if (process.env.NODE_ENV_USER !== 'production') {
+  resetUserDatabase()
+}
 
 app.listen(PORT, () => { console.log(`we are on the port : ${PORT}`) })
 

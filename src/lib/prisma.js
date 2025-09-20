@@ -17,19 +17,19 @@ export const resetTodoDatabase = async () => {
   try {
     await prisma.todo.deleteMany({})
     await prisma.$executeRaw`DELETE FROM sqlite_sequence WHERE name='Todo'`
-    console.log('🗑️ Database reset - IDs will start from 1')
+    console.log('🗑️ Todo Database reset - IDs will start from 1')
   } catch (error) {
     console.log('Reset failed:', error.message)
   }
 }
-// export const resetUserDatabase = async () => {
-//   if (process.env.NODE_ENV_USER === 'production') return
-//   try {
-//     await prisma.users.deleteMany({})
-//     await prisma.$executeRaw`DELETE FROM sqlite_sequence WHERE name='User'`
-//     console.log('🗑️ Database reset - IDs will start from 1')
-//   } catch (error) {
-//     console.log('Reset failed:', error.message)
-//   }
-// }
+export const resetUserDatabase = async () => {
+  if (process.env.NODE_ENV_USER === 'production') return
+  try {
+    await prisma.user.deleteMany({})
+    await prisma.$executeRaw`DELETE FROM sqlite_sequence WHERE name='User'`
+    console.log('🗑️ User Database reset - IDs will start from 1')
+  } catch (error) {
+    console.log('Reset failed:', error.message)
+  }
+}
 export default prisma
