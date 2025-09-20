@@ -8,3 +8,5 @@ export const updateTodoSchema = z.object({
   title: z.string().trim().min(1, "title must be a non-empty string").optional(),
   completed: z.boolean().optional()
 });
+
+

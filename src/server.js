@@ -5,10 +5,13 @@ dotenv.config();
 const app = express()
 app.use(express.json())
 import { resetTodoDatabase } from './lib/prisma.js'
+import authRouter from "./routes/authRoute.js"
 
 const PORT = process.env.PORT || 4000
 
 app.use("/api/todo",todoRouter)
+
+app.use("/api/auth", authRouter)
 
 
 app.use((err, req, res, next) => { // this is basically a middleware things which can be called by next(variable name) to check for errors

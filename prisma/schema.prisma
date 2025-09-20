@@ -9,16 +9,20 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-
 model Todo {
   id        Int      @id @default(autoincrement())
   title     String
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
+  userId    Int // Foreign key to User
+  User      User     @relation(fields: [userId], references: [id]) // learn about this more and how this works later on
 }
 
-// model User {
-//   id    Int     @id @default(autoincrement())
-//   name  String
-//   email String? @unique
-// }
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique  // Changed from email to username
+  password  String   
+  name      String?
+  todos     Todo[]   
+  createdAt DateTime @default(now())
+}
