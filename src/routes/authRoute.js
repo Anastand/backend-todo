@@ -64,16 +64,35 @@ router.post("/register", async (req, res, next) => {
       },
       token:token
     })
-
-
-
   } catch (error) {
     next(error)
   }
-
 });
-router.post("/login", (req, res, next) => {
-  res.json({ msg: "you have hit /register user end point" });
+
+router.post("/login", async (req, res, next) => {
+  const registerData = loginUserSchema.safeParse(req.body);
+  if (!registerData.success) {
+    res.status(400).json({msg: "we suffered from an error",error: registerData.error})
+  } 
+  const { username, password } = registerData.data
+  try {
+    const userCred = await prisma.user.findUnique({
+      where:{username:username}
+    })
+    if (!userCred) { return res.status(404).json({ msg: "username not found ,please enter correct username" }) }
+    
+    const checkPassword =await bcrypt.compare(password,userCred.password);
+    
+    // generating the token
+    const token = jwt.sign({ userId: userCred.id, username: userCred.username }, process.env.JWT_SECRET, { expiresIn: "6h" })
+    res.status(201).json({
+      success: true,
+      msg: "You are logged in",
+      token:token
+    })
+  } catch (error) {
+    next(error)
+  }
 });
 
 export default router;

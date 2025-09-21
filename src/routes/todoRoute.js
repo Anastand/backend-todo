@@ -3,27 +3,29 @@ import prisma from '../lib/prisma.js'
 import {createError} from "../utils/createError.js"
 import {createTodoSchema} from "../validator/todoValidator.js"
 import {updateTodoSchema} from "../validator/todoValidator.js"
-import { number } from 'zod'
+import authMiddleware from '../middleware/authMiddleware.js'
 const router = express.Router()
 
-router.get("/", async (req, res, next) => { // check for the route
+router.get("/", authMiddleware ,async (req, res, next) => { // check for the route
   try {
-    const allTodo = await prisma.todo.findMany()
+    const allTodo = await prisma.todo.findMany({
+      where:{userId:req.user.id}
+    })
     res.json(allTodo)
   } catch (error) {
     next(error)
   }
 })  
 
-router.post("/", async(req, res, next) => { // add a todo
+router.post("/",authMiddleware, async(req, res, next) => { // add a todo
   const parseResult = createTodoSchema.safeParse(req.body)
   if (!parseResult.success) { return next(createError(400, parseResult.error.message)) }
   const { title, completed } = parseResult.data;
-  
+  const userId=req.user.id
   try {
     const newTodo = await prisma.todo.create({
       data:{
-      title, completed: completed ?? false
+      userId,title, completed: completed ?? false
     }})
     return res.status(201).json(newTodo);
   } catch (error) {
@@ -31,12 +33,12 @@ router.post("/", async(req, res, next) => { // add a todo
   }
 })
 
-router.get("/:id",async (req, res,next) => { // get todo by id 
+router.get("/:id",authMiddleware,async (req, res,next) => { // get todo by id 
   
   try {
     const { id } = req.params
     const searchedTodo = await prisma.todo.findUnique({
-      where: { id: Number(id) }
+      where: { id: Number(id),userId:req.user.id }
     })
     if(!searchedTodo){return res.status(404).json({msg:"todo not found"})}
     res.json(searchedTodo)
@@ -45,14 +47,14 @@ router.get("/:id",async (req, res,next) => { // get todo by id
   }
 })
 
-router.put("/:id", async (req, res, next) => { // put => allows us to update a todo
+router.put("/:id",authMiddleware, async (req, res, next) => { // put => allows us to update a todo
   const validateUpdateData = updateTodoSchema.safeParse(req.body)
   if(!validateUpdateData.success){return next(createError(400,validateUpdateData.error.message)) }
   const { id } = req.params
   const { title, completed } = validateUpdateData.data
   try {   
     const updateTodo = await prisma.todo.update({
-      where: { id: Number(id) },
+      where: { id: Number(id),userId:req.user.id },
       data: { title, completed }
     })
     if (!id) { return res.status(404).json({ msg: "todo not found" }) }
@@ -62,11 +64,11 @@ router.put("/:id", async (req, res, next) => { // put => allows us to update a t
   }
 })
 
-router.delete("/:id",async (req, res,next) => {
+router.delete("/:id",authMiddleware,async (req, res,next) => {
   const { id } = req.params;
 try {
   const deletedTodo = await prisma.todo.delete({
-    where:{id:Number(id)}
+    where:{id:Number(id),userId:req.user.id}
   })
   res.json({ msg: "todo deleted", deletedTodo });
 } catch (error) {
